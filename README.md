@@ -21,7 +21,33 @@ Simple Rest API for CRUD operation on User's visit data across state and city bu
 <ul>
   <li>POST /api/v1/user/?FirstName={fName}&LastName={lName}&UserName={uName}</li>
   <li>User will get created with Status=Pending</li>
+</ul>
+
+<b>Post New State</b>
+
 <ul>
+  <li>POST /api/v1/state?Name={stateName}&Abbr={abbr}&Cities={cities}</li>
+  <li>{stateName} State Name</li>
+</ul>
+
+<b>Post New Visit</b>
+
+<ul>
+  <li>POST /api/v1/user/mashah/visits?City=Birmingham&State=Alabama&Latitude=33.4861234&Longitude=-86.7805648</li>
+  <li>Returns with success message and along with near by friends if any (within last 5 days user have pinned near by)</li>
+</ul>
+
+
+&nbsp;{
+  &nbsp;&nbsp;"Message": "Visit have been registered!!",
+  &nbsp;&nbsp;"NearByVisits": [
+    &nbsp;&nbsp;&nbsp;{
+      &nbsp;&nbsp;&nbsp;&nbsp;"Name": "Shaun Marsh",
+      &nbsp;&nbsp;&nbsp;&nbsp;"Distance": 2.96,
+      &nbsp;&nbsp;&nbsp;&nbsp;"Visited": "2015-10-06T15:05:01"
+    &nbsp;&nbsp;&nbsp;}
+  &nbsp;&nbsp;]
+&nbsp;}
 
 <b>Approve or Reject User</b>
 
