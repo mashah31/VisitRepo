@@ -40,6 +40,19 @@ namespace VisitsRepo
             return stateValueType.name;
         }
 
+        public static PaginationDTO checkPaginationVal(PaginationDTO pageDTO)
+        {
+            if (pageDTO == null)
+            {
+                return new PaginationDTO()
+                {
+                    PageSize = 10,
+                    PageNumber = 0
+                };
+            }
+            return pageDTO;
+        }
+
         public static List<VisitDTO>  findNearByFriends(UserVisitsContext db, int currUserID, DbGeography currUserLoc, int cityId, int topXItems, int datesInYear, int proximityInMiles)
         {
             DateTime dtFrom = DateTime.Now.AddYears(datesInYear);
@@ -50,7 +63,7 @@ namespace VisitsRepo
                                  join m_user in db.Users on m_visit.userid equals m_user.id
                                  where
                                     m_user.id != currUserID && 
-                                    (cityId <= 0 || (cityId > 0 && m_visit.cityid == cityId)) && 
+                                    (cityId == -1 || (cityId > 0 && m_visit.cityid == cityId)) && 
                                     m_visit.visited > dtFrom && m_dist < proximity
                                  orderby m_dist, m_visit.visited descending
                                  select new VisitDTO()

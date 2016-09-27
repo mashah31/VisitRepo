@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DTOs\GeoLocationDTO.cs" />
+    <Compile Include="Models\DTOs\PaginationDTO.cs" />
     <Compile Include="Models\DTOs\StateDTO.cs" />
     <Compile Include="Models\DTOs\UserDTO.cs" />
     <Compile Include="Models\Models\City.cs" />

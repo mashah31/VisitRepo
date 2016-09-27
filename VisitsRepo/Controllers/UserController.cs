@@ -21,10 +21,12 @@ namespace VisitsRepo.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("")]
-        public HttpResponseMessage GetUsers()
+        public HttpResponseMessage GetUsers([FromUri]PaginationDTO pagination)
         {
             try
             {
+                pagination = Utils.checkPaginationVal(pagination);
+
                 //Hide users; If CreatedDate < 5 Years && LastAccessDate > 1 year
                 DateTime lastAccessDateCeeling = DateTime.Now.AddYears(-1);
 
@@ -33,6 +35,7 @@ namespace VisitsRepo.Controllers
                     var users = (from user in db.Users
                                  where user.status == (int)Status.verified &&
                                         user.lastaccesstime < lastAccessDateCeeling
+                                 orderby user.lastaccesstime descending
                                  select new UsersDTO
                                  {
                                      Name = user.firstname + " " + user.lastname,
@@ -53,7 +56,8 @@ namespace VisitsRepo.Controllers
                                                }).FirstOrDefault(),
                                      CreatedAt = user.added,
                                      LastUpdateTime = user.lastaccesstime
-                                 }).ToList();
+                                 })
+                                 .Skip(pagination.PageSize * pagination.PageNumber).Take(pagination.PageSize).ToList();
                     return Request.CreateResponse(HttpStatusCode.OK, users);
                 }
             }
@@ -70,10 +74,11 @@ namespace VisitsRepo.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{username}/visits")]
-        public HttpResponseMessage GetVisitsByUser(string username)
+        public HttpResponseMessage GetVisitsByUser(string username, [FromUri]PaginationDTO pagination)
         {
             try
             {
+                pagination = Utils.checkPaginationVal(pagination);
                 DateTime dateFrom = DateTime.Now.AddYears(-1);
 
                 if (string.IsNullOrEmpty(username))
@@ -104,24 +109,32 @@ namespace VisitsRepo.Controllers
                                          State = state.name,
                                          Latitude = visit.latitude,
                                          Longitude = visit.longitude
-                                     }).Take(10).ToList();      // Get only top 10 visits ..
+                                     })
+                                     .Skip(pagination.PageSize * pagination.PageNumber).Take(pagination.PageSize).ToList();
 
-                    // Get list of friends visited (pinned) area around 50miles in last 1 year
-                    var userLoc = DbGeography.PointFromText(string.Format("POINT({0} {1})", visitsObj[0].Longitude, visitsObj[0].Latitude), Utils.SRID_GPS);
-                    var nearByFriends = Utils.findNearByFriends(db, userObj.id, userLoc, visitsObj[0].CityID, 10, -1, 50);
-
-                    var uVisitsObj = new UsersDTO()
+                    if (visitsObj != null && visitsObj.Count() > 0)
                     {
-                        Name = userObj.firstname + " " + userObj.lastname,
-                        UserName = userObj.username,
-                        CreatedAt = userObj.added,
-                        Recent = visitsObj[0],
-                        Visits = visitsObj,
-                        LastUpdateTime = userObj.lastaccesstime,
-                        NearBy = nearByFriends
-                    };
+                        // Get list of friends visited (pinned) area around 50miles in last 1 year
+                        var userLoc = DbGeography.PointFromText(string.Format("POINT({0} {1})", visitsObj[0].Longitude, visitsObj[0].Latitude), Utils.SRID_GPS);
+                        var nearByFriends = Utils.findNearByFriends(db, userObj.id, userLoc, visitsObj[0].CityID, 10, -1, 50);
 
-                    return Request.CreateResponse(HttpStatusCode.OK, uVisitsObj);
+                        var uVisitsObj = new UsersDTO()
+                        {
+                            Name = userObj.firstname + " " + userObj.lastname,
+                            UserName = userObj.username,
+                            CreatedAt = userObj.added,
+                            Recent = visitsObj[0],
+                            Visits = visitsObj,
+                            LastUpdateTime = userObj.lastaccesstime,
+                            NearBy = nearByFriends
+                        };
+
+                        return Request.CreateResponse(HttpStatusCode.OK, uVisitsObj);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.NotFound, "Visits not found!!");
+                    }
                 }
             }
             catch (Exception ex)
@@ -171,7 +184,7 @@ namespace VisitsRepo.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("")]
-        public HttpResponseMessage PostUser([FromBody]UserDTO userDTOObj)
+        public HttpResponseMessage PostUser([FromUri]UserDTO userDTOObj)
         {
             try
             {
@@ -254,7 +267,7 @@ namespace VisitsRepo.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("{username}/visits")]
-        public HttpResponseMessage PostVisit(string username, [FromBody]UserVisitDTO visitDTO)
+        public HttpResponseMessage PostVisit(string username, [FromUri]UserVisitDTO visitDTO)
         {
             try
             {
@@ -374,7 +387,7 @@ namespace VisitsRepo.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("{username}/visits")]
-        public HttpResponseMessage DeleteVisit(string username, [FromBody]UserVisitDTO visitDTO)
+        public HttpResponseMessage DeleteVisit(string username, [FromUri]UserVisitDTO visitDTO)
         {
             try
             {

@@ -73,10 +73,12 @@ namespace VisitsRepo.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{state}/cities")]
-        public HttpResponseMessage GetCitiesByState(string state)
+        public HttpResponseMessage GetCitiesByState(string state, [FromUri]PaginationDTO pagination)
         {
             try
             {
+                pagination = Utils.checkPaginationVal(pagination);
+
                 using (StatesContext db = new StatesContext())
                 {
                     stateValueType type = Utils.checkStateVal(state);
@@ -98,10 +100,12 @@ namespace VisitsRepo.Controllers
                         Name = stateObj.name,
                         Abbr = stateObj.abbreviation,
                         Updated = stateObj.updated,
-                        Cities = stateObj.cities.Select(c => new CityDTO() {
-                            Name = c.name,
-                            visitedCnt = -1
-                        }).ToList()
+                        Cities = stateObj.cities
+                            .Select(c => new CityDTO() {
+                                Name = c.name,
+                                visitedCnt = -1
+                            }).OrderBy(c => c.Name)
+                            .Skip(pagination.PageSize * pagination.PageNumber).Take(pagination.PageSize).ToList()
                     });
                 }
             }
@@ -144,7 +148,7 @@ namespace VisitsRepo.Controllers
         /// <param name="stateDTO">State DO Object</param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage Post([FromBody]StateDTO stateDTO)
+        public HttpResponseMessage Post([FromUri]StateDTO stateDTO)
         {
             try
             {
