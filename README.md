@@ -18,33 +18,45 @@ Simple Rest API for CRUD operation on User's visit data across state and city bu
 
 <b>Post New User</b>
 
-POST /api/v1/user/?FirstName={fName}&LastName={lName}&UserName={uName}<br />
-User will get created with Status=Pending<br />
+<ul>
+  <li>POST /api/v1/user/?FirstName={fName}&LastName={lName}&UserName={uName}</li>
+  <li>User will get created with Status=Pending</li>
+<ul>
 
 <b>Approve or Reject User</b>
 
-PUT /POST /api/v1/user/{username}/auth/{condition}<br />
-{username}: User Name<br />
-{condition}: true (approve)/ false (rejected)<br />
+<ul>
+  <li>PUT /POST /api/v1/user/{username}/auth/{condition}</li>
+  <li>{username}: User Name</li>
+  <li>{condition}: true (approve)/ false (rejected)</li>
+</ul>
 
 <b>Get list of Users in order of Recent Visits</b>
 
-GET api/v1/user/?PageSize={pageSize}&PageNumber={pageNumber}<br />
-{pageSize}: Number of users to return<br />
-{pageNumber}: Index of page<br />
+<ul>
+  <li>GET api/v1/user/?PageSize={pageSize}&PageNumber={pageNumber}</li>
+  <li>{pageSize}: Number of users to return</li>
+  <li>{pageNumber}: Index of page</li>
+</ul>
 
 <b>Get list of visits by user</b>
 
-GET api/v1/user/{username}/visits/?PageSize=2&PageNumber=0<br />
-{username}: User Name<br /><br />
-returns with JSON<br />
+<ul>
+  <li>GET api/v1/user/{username}/visits/?PageSize=2&PageNumber=0</li>
+  <li>{username}: User Name</li>
+  <li>Visited section: List of recent {x} visits with geo coordinates</li>
+  <li>Name/Username/LastAccess section: Personal information of User</li>
+  <li>Near By section: List of friends around recent visit (pinned visit). Distance is specified in miles.</li>
+  <li>returns with JSON</li>
+</ul>
+
 {<br />
   &nbsp;"Name": "Shaun Marsh", "UserName": "smarsh",<br />
   &nbsp;"CreatedAt": "2012-06-19T00:00:00",<br />
   &nbsp;"Recent": {<br />
-    &nbsp;&nbsp;"Visited": "2016-09-26T09:11:31.043",<br />
-    &nbsp;&nbsp;"CityID": 4, "City": "Somerville", "State": "Alabama",<br />
-    &nbsp;&nbsp;"Latitude": 34.4691003, "Longitude": -86.7928408<br />
+    &nbsp;&nbsp;&nbsp;"Visited": "2016-09-26T09:11:31.043",<br />
+    &nbsp;&nbsp;&nbsp;"CityID": 4, "City": "Somerville", "State": "Alabama",<br />
+    &nbsp;&nbsp;&nbsp;"Latitude": 34.4691003, "Longitude": -86.7928408<br />
   &nbsp;},<br />
   "Visits": [<br />
     &nbsp;{<br />
@@ -63,33 +75,39 @@ returns with JSON<br />
 }
 
 
-Visited section: List of recent {x} visits with geo coordinates<br />
-Name/Username/LastAccess section: Personal information of User<br />
-Near By section: List of friends around recent visit (pinned visit). Distance is specified in miles.<br />
+<b>Get list of closest users around specified location (Geo Location)</b>
 
-<b>Get list of closest users</b>
-
-GET /api/v1/user/{closestXUsers}?Latitude={latitude}&Longitude={longitude}<br />
-{closestXUsers}: Closest X Users to Retrive
-{latitude}/{longitude}: GEO Location to find Users Around
+<ul>
+  <li>GET /api/v1/user/{closestXUsers}?Latitude={latitude}&Longitude={longitude}</li>
+  <li>{closestXUsers}: Closest X Users to Retrive</li>
+  <li>{latitude}/{longitude}: GEO Location to find Users Around</li>
+</ul>
 
 <b>Get most popular states</b>
 
-GET /api/v1/state/{topX}<br />
-{topX} Top X to retrive for popular States<br />
+<ul>
+  <li>GET /api/v1/state/{topX}</li>
+  <li>{topX} Top X to retrive for popular States</li>
+</ul>
 
 <b>Get most popular cities of state</b>
 
-GET /api/v1/state/{state}/cities/{topX}<br />
-{topX} Top X to retrive for popular cities<br />
-{state} Name or Abbreviation of state are acceptable<br />
+<ul>
+  <li>GET /api/v1/state/{state}/cities/{topX}</li>
+  <li>{topX} Top X to retrive for popular cities</li>
+  <li>{state} Name or Abbreviation of state are acceptable</li>
+</ul>
 
 <b>Get cities of state</b>
 
-GET /api/v1/state/{state}/cities/?PageNumber={pageNumber}&PageSize={pageSize}<br />
-{state} Name or Abbreviation of state are acceptable<br />
+<ul>
+  <li>GET /api/v1/state/{state}/cities/?PageNumber={pageNumber}&PageSize={pageSize}</li>
+  <li>{state} Name or Abbreviation of state are acceptable</li>
+</ul>
 
 <b>Delete User</b>
 
-DELETE api/v1/user/{username}
-{username}: User Name
+<ul>
+  <li>DELETE api/v1/user/{username}</li>
+  <li>{username}: User Name</li>
+</ul>
